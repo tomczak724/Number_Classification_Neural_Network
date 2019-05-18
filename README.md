@@ -1,2 +1,2 @@
-# Number_Classification_Neural_Network
+# Number Classification Neural Network
 A neural network designed to classify hand-written digits from the MNIST database
