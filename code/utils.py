@@ -1,19 +1,13 @@
 
 import sys
-import time
 import gzip
-import glob
-import json
 import numpy
 import struct
-from astropy.io import fits
+from scipy import ndimage
 from matplotlib import pyplot
-from matplotlib.backends.backend_pdf import PdfPages
 
 
-
-
-def load_data(set_type='train'):
+def load_MNIST_data(set_type='train', centering=True, normalize=True):
     '''Reads the MNIST data binaries and returns as arrays.
     Specify either "train" or "test" data'''
 
@@ -49,13 +43,25 @@ def load_data(set_type='train'):
         image_data = struct.unpack('B'*(Nrows*Ncols), byte_data)
         digits_data[i] = numpy.array(image_data)
 
+    ###  centering images
+    print('')
+    if centering == True:
+        for i in range(Ntot):
+
+            text = '\r[%2i%%] centering digit images' % (i*100./(Ntot-1))
+            sys.stdout.write(text)
+            sys.stdout.flush()
+
+            digits_data[i] = center_image(digits_data[i])
+
     print('')
     fopen_labels.close()
     fopen_images.close()
 
     ###  normalizing data
-    for d in digits_data:
-        d /= d.max()
+    if normalize == True:
+        for d in digits_data:
+            d /= d.max()
 
     return (digits_data, digits_labels)
 
@@ -83,3 +89,151 @@ def print_data_stats(data, labels):
         text += '  Instances of "%i" is %i (%i%%)\n' % (i, labels.tolist().count(i), 100.*labels.tolist().count(i)/n_digits)
 
     print(text)
+
+
+def center_image(data):
+    '''Calculates the intensity-weighted center and returns a centered image'''
+
+    s = int(data.shape[0]**0.5)
+    xgrid, ygrid = numpy.meshgrid(numpy.arange(0.5, s+0.5), numpy.arange(0.5, s+0.5))
+
+    xcenter = numpy.average(xgrid, weights=data.reshape((s,s)))
+    ycenter = numpy.average(ygrid, weights=data.reshape((s,s)))
+
+    dx = s/2. - xcenter
+    dy = s/2. - ycenter
+
+    ###  applying translational shifts
+    data = xshift(data.reshape((s,s)), dx)
+    data = yshift(data.reshape((s,s)), dy)
+
+    return data.flatten()
+
+
+def xshift(data, dx):
+    '''
+    Description
+    -----------
+    Performs a translational shift on the input image
+    along the x-axis. Allows for subpixel precision.
+
+    Parameters
+    ----------
+    data : numpy.array
+        Two dimensional image
+    dx : float
+        Size of translational shift in pixels
+
+    Returns
+    -------
+    output : numpy.array
+        Shifted image
+    '''
+
+    sy, sx = data.shape
+    output = numpy.zeros(data.shape)
+
+    for i_x in range(data.shape[1]):
+
+        weights = numpy.zeros(data.shape)
+
+        if 0 <= int(i_x-numpy.ceil(dx)) < sx:
+            weights[:, int(i_x-numpy.ceil(dx))] = dx%1
+        if 0 <= int(i_x-numpy.floor(dx)) < sx:
+            weights[:, int(i_x-numpy.floor(dx))] = 1-dx%1
+
+        if weights.sum() > 0:
+            output[:, i_x] = numpy.sum(data*weights, axis=1)
+
+    return output
+
+
+def yshift(data, dy):
+    '''
+    Description
+    -----------
+    Performs a translational shift on the input image
+    along the y-axis. Allows for subpixel precision.
+
+    Parameters
+    ----------
+    data : numpy.array
+        Two dimensional image
+    dy : float
+        Size of translational shift in pixels
+
+    Returns
+    -------
+    output : numpy.array
+        Shifted image
+    '''
+
+    sy, sx = data.shape
+    output = numpy.zeros(data.shape)
+
+    for i_y in range(data.shape[0]):
+
+        weights = numpy.zeros(data.shape)
+
+        if 0 <= int(i_y-numpy.ceil(dy)) < sy:
+            weights[int(i_y-numpy.ceil(dy)), :] = dy%1
+        if 0 <= int(i_y-numpy.floor(dy)) < sy:
+            weights[int(i_y-numpy.floor(dy)), :] = 1-dy%1
+
+        if weights.sum() > 0:
+            output[i_y, :] = numpy.sum((data*weights).T, axis=1)
+
+    return output
+
+
+def calc_xy_center(data):
+    '''Calculates the intensity-weighted center of the input image'''
+
+    s = int(data.shape[0]**0.5)
+    xgrid, ygrid = numpy.meshgrid(numpy.arange(0.5, s+0.5), numpy.arange(0.5, s+0.5))
+
+    xcenter = numpy.average(xgrid, weights=data.reshape((s,s)))
+    ycenter = numpy.average(ygrid, weights=data.reshape((s,s)))
+
+    return xcenter, ycenter
+
+
+def plot_centering_example():
+    '''Generates a plot that illustrates the centering of the MNIST digit images'''
+
+    data_test, labels_test = load_MNIST_data(set_type='test', centering=False)
+    data = data_test[9322]
+
+
+    fig, (ax1, ax2) = pyplot.subplots(ncols=2, figsize=(9.5,4.5))
+    fig.subplots_adjust(left=0.04, right=0.96, bottom=0.04, top=0.92)
+
+    ax1.xaxis.set_visible(False)
+    ax1.yaxis.set_visible(False)
+    ax2.xaxis.set_visible(False)
+    ax2.yaxis.set_visible(False)
+
+    ax1.set_title('Original image', size=16)
+    ax2.set_title('Centered image', size=16)
+
+    cmap = pyplot.cm.Greens
+    ax1.imshow(data.reshape((28,28)), interpolation='none', cmap=cmap, vmin=0, vmax=data.max())
+    ax2.imshow(center_image(data).reshape((28,28)), interpolation='none', cmap=cmap, vmin=0, vmax=data.max())
+
+
+    ax1.axvline((28-1)/2., color='k', lw=2)
+    ax1.axhline((28-1)/2., color='k', lw=2)
+    ax2.axvline((28-1)/2., color='k', lw=2)
+    ax2.axhline((28-1)/2., color='k', lw=2)
+    for i in range(28+1):
+        ax1.axvline(i-0.5, color='gray', lw=1, alpha=0.3)
+        ax1.axhline(i-0.5, color='gray', lw=1, alpha=0.3)
+        ax2.axvline(i-0.5, color='gray', lw=1, alpha=0.3)
+        ax2.axhline(i-0.5, color='gray', lw=1, alpha=0.3)
+
+    xc, yc = calc_xy_center(data)
+    ax1.plot(xc-0.5, yc-0.5, color='r', marker='x', ms=8, mew=3)
+
+    return fig, ax1, ax2
+
+

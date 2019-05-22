@@ -8,8 +8,8 @@ import numpy
 
 def main():
 
-    #data_train, labels_train = utils.load_data(set_type='train')
-    data_test, labels_test = utils.load_data(set_type='test')
+    #data_train, labels_train = utils.load_MNIST_data(set_type='train')
+    data_test, labels_test = utils.load_MNIST_data(set_type='test')
 
     n = 5000
     inds = numpy.arange(0, len(labels_test))
