@@ -1,26 +1,30 @@
 
+import os
 import pdb
 import sys
+import time
 import json
 import utils
 import numpy
+from matplotlib import pyplot
 
 
 def main():
 
-    #data_train, labels_train = utils.load_MNIST_data(set_type='train')
-    data_test, labels_test = utils.load_MNIST_data(set_type='test')
+    data_train, labels_train = utils.load_MNIST_data(set_type='train', centering=False)
+    #data_test, labels_test = utils.load_MNIST_data(set_type='test', centering=False)
 
-    n = 5000
-    inds = numpy.arange(0, len(labels_test))
-    numpy.random.shuffle(inds)
-    inds = inds[0:n]
+    #n = 5000
+    #inds = numpy.arange(0, len(labels_test))
+    #numpy.random.shuffle(inds)
+    #inds = inds[0:n]
 
-    nc1 = NumberClassifier(N_backprop=100)
-    nc1.train_on(data_test[inds], labels_test[inds])
+    nc1 = NumberClassifier(N_backprop=100, N_neurons=[28, 28])
+    #nc1.train_on(data_test[inds], labels_test[inds])
+    nc1.train_on(data_train, labels_train)
 
     nc1.save_network()
-    nc1.save_training_results()
+    nc1.save_training_progress()
 
 
 
@@ -58,10 +62,10 @@ class NumberClassifier(object):
         self.weights = None
         self.biases = None
 
-        self.train_progress = {'iteration': [], 
-                               'n_unique': [], 
-                               'n_correct': [], 
-                               'f_correct': []}
+        self.training_progress = {'iteration': [], 
+                                  'n_unique': [], 
+                                  'n_correct': [], 
+                                  'f_correct': []}
 
 
     def load_weights_biases(self, fname='../output/neuron_weights_biases.json'):
@@ -76,6 +80,19 @@ class NumberClassifier(object):
         self.N_neurons = [len(b) for b in self.biases[:-1]]
         self.N_layers = len(self.N_neurons) + 2
 
+    def load_training_progress(self, fname='../output/training_progress.json'):
+        '''Loads existing progress file from previous training'''
+
+        self.training_progress = json.load(open(fname, 'r'))
+
+    def load_training_progress_csv(self, fname='../output/training_progress.json'):
+        '''Loads existing progress file from previous training'''
+
+        arr = numpy.loadtxt(fname, delimiter=',', skiprows=1)
+        self.training_progress['iteration'] = arr[:,0].astype(int)
+        self.training_progress['n_unique'] = arr[:,1].astype(int)
+        self.training_progress['n_correct'] = arr[:,2].astype(int)
+        self.training_progress['f_correct'] = arr[:,3].astype(int)
 
 
     def train_on(self, data_train, labels_train):
@@ -98,6 +115,8 @@ class NumberClassifier(object):
         if self.verbose == True:
             print('running %i iterations...' % self.N_backprop)
         for i_backprop in range(self.N_backprop):
+
+            tstart = time.time()
 
             ###  array for storing guesses
             guesses = numpy.zeros(n_digits)
@@ -142,18 +161,22 @@ class NumberClassifier(object):
                 self.weights[i_layer] -= self.eta * grad_weights[i_layer]
 
 
-
             ###  writing summary stats to file
             n_unique = numpy.unique(guesses).shape[0]
             n_correct = (guesses - labels_train).tolist().count(0)
 
-            self.train_progress['iteration'].append(i_backprop)
-            self.train_progress['n_unique'].append(n_unique)
-            self.train_progress['n_correct'].append(n_correct)
-            self.train_progress['f_correct'].append(n_correct/n_digits)
+            self.training_progress['iteration'].append(i_backprop)
+            self.training_progress['n_unique'].append(n_unique)
+            self.training_progress['n_correct'].append(n_correct)
+            self.training_progress['f_correct'].append(n_correct/n_digits)
+
+            self.save_network()
+            self.save_training_progress()
+
+            tstop = time.time()
 
             if self.verbose:
-                print('%4i, %2i, %4i, %.3f' % (i_backprop+1, n_unique, n_correct, n_correct/n_digits))
+                print('%4i, %2i, %4i, %.3f (%i seconds elapsed)' % (i_backprop+1, n_unique, n_correct, n_correct/n_digits, tstop-tstart))
 
 
     def _initialize_random_weights(self, len_data):
@@ -235,8 +258,8 @@ class NumberClassifier(object):
             json.dump(neurons, outer_json)
 
 
-    def save_training_results(self, fname=None):
-        '''Save the results from training to JSON file'''
+    def save_training_progress(self, fname=None):
+        '''Save the progress from training to JSON file'''
 
         ###  generate output filename if not provided
         if fname is None:
@@ -244,10 +267,73 @@ class NumberClassifier(object):
             for n in self.N_neurons:
                 str_layers += '%ix' % n
 
-            fname = '../output/training_results_%s_backprop%i.json' % (str_layers[:-1], self.N_backprop)
+            fname = '../output/training_progress_%s_backprop%i.json' % (str_layers[:-1], self.N_backprop)
 
         with open(fname, 'w') as outer_json:
-            json.dump(self.train_progress, outer_json)
+            json.dump(self.training_progress, outer_json)
+
+
+    def save_training_progress_csv(self, fname=None):
+        '''Save the progress from training to csv file'''
+
+        ###  generate output filename if not provided
+        if fname is None:
+            str_layers = ''
+            for n in self.N_neurons:
+                str_layers += '%ix' % n
+
+            fname = '../output/training_progress_%s_backprop%i.csv' % (str_layers[:-1], self.N_backprop)
+
+        ###  converting training progress to array
+        arr = numpy.zeros((len(self.training_progress['iteration']), len(self.training_progress)))
+        for i, vals in enumerate(self.training_progress.values()):
+            arr[:,i] = vals
+
+        numpy.savetxt(fname, arr, delimiter=',', header=','.join(self.training_progress.keys()), fmt=('%i', '%i', '%i', '%.4f'))
+
+
+    def guess_digit(self, data):
+        '''Returns the best guess from the data for the given digit'''
+        zs, activations = self._forward_propagate(data)
+        return activations[-1].tolist().index(activations[-1].max())
+
+
+    def plot_guess_overview(self, data, true_label):
+
+        #zs, activations = self._forward_propagate(data)
+        zs, activations = nc1._forward_propagate(data)
+        probabilities = activations[-1] / activations[-1].sum()
+
+        fig, (ax1, ax2) = pyplot.subplots(ncols=2, figsize=(9.5, 4.5))
+        fig.subplots_adjust(left=0.08, top=0.92, right=0.96, bottom=0.1)
+
+        ax1.set_xlabel('Digit Label', size=14)
+        ax1.set_ylabel('Probability', size=14)
+
+        ###  plotting digit image
+        ax2.xaxis.set_visible(False)
+        ax2.yaxis.set_visible(False)
+        s = int(data.shape[0]**0.5)
+        ax2.imshow(data.reshape((s,s)), interpolation='none', cmap=pyplot.cm.Greens)
+        for i in range(28+1):
+            ax2.axvline(i-0.5, color='gray', lw=1, alpha=0.3)
+            ax2.axhline(i-0.5, color='gray', lw=1, alpha=0.3)
+
+        t = ax2.text(0.02, 0.98, 'true label = %i' % true_label, transform=ax2.transAxes, ha='left', va='top', size=14)
+
+        ###  plotting guess probabilities
+        ax1.step(range(-1,11), [0]+probabilities.tolist()+[0], 
+                 where='mid', color='#1f77b4', lw=2)
+
+        ax1.xaxis.set_ticks(range(10))
+        for i in numpy.arange(-0.5,10,1):
+            ax1.axvline(i, color='gray', lw=1)
+
+        for i in range(10):
+            p = probabilities[i]
+            ax1.text(i, p, '%i'%(100*p), ha='center', va='bottom', color='#1f77b4', fontweight='bold', family='sans-serif')
+
+        return fig, (ax1, ax2)
 
 
 
