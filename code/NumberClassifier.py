@@ -301,7 +301,7 @@ class NumberClassifier(object):
     def plot_guess_overview(self, data, true_label):
 
         #zs, activations = self._forward_propagate(data)
-        zs, activations = nc1._forward_propagate(data)
+        zs, activations = self._forward_propagate(data)
         probabilities = activations[-1] / activations[-1].sum()
 
         fig, (ax1, ax2) = pyplot.subplots(ncols=2, figsize=(9.5, 4.5))
@@ -314,7 +314,7 @@ class NumberClassifier(object):
         ax2.xaxis.set_visible(False)
         ax2.yaxis.set_visible(False)
         s = int(data.shape[0]**0.5)
-        ax2.imshow(data.reshape((s,s)), interpolation='none', cmap=pyplot.cm.Greens)
+        ax2.imshow(data.reshape((s,s)), interpolation='none', cmap=pyplot.cm.Greens, vmin=data.min(), vmax=data.max())
         for i in range(28+1):
             ax2.axvline(i-0.5, color='gray', lw=1, alpha=0.3)
             ax2.axhline(i-0.5, color='gray', lw=1, alpha=0.3)
@@ -327,14 +327,13 @@ class NumberClassifier(object):
 
         ax1.xaxis.set_ticks(range(10))
         for i in numpy.arange(-0.5,10,1):
-            ax1.axvline(i, color='gray', lw=1)
+            ax1.axvline(i, color='gray', lw=1, alpha=0.5)
 
         for i in range(10):
             p = probabilities[i]
             ax1.text(i, p, '%i'%(100*p), ha='center', va='bottom', color='#1f77b4', fontweight='bold', family='sans-serif')
 
         return fig, (ax1, ax2)
-
 
 
 
