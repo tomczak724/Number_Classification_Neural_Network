@@ -1,4 +1,5 @@
 
+import os
 import sys
 import gzip
 import numpy
@@ -234,6 +235,72 @@ def plot_centering_example():
     xc, yc = calc_xy_center(data)
     ax1.plot(xc-0.5, yc-0.5, color='r', marker='x', ms=8, mew=3)
 
-    return fig, ax1, ax2
+    return fig, (ax1, ax2)
+
+
+def plot_centering_offsets():
+    '''Generates a plot that shows the distribution of centering offsets'''
+
+    if os.path.exists('../output/centering_offsets.csv'):
+        d = numpy.loadtxt('../output/centering_offsets.csv', skiprows=1, delimiter=',')
+        xoffsets = d[:,1]
+        yoffsets = d[:,2]
+
+    else:
+        data_train, labels_train = load_MNIST_data(set_type='train', centering=False)
+
+        xoffsets = numpy.zeros(len(labels_train))
+        yoffsets = numpy.zeros(len(labels_train))
+
+        for i_digit in range(len(labels_train)):
+
+            text = '\r[%2i%%] calculating centering offsets' % (i_digit*100./(len(labels_train)-1))
+            sys.stdout.write(text)
+            sys.stdout.flush()
+
+            xc, yc = calc_xy_center(data_train[i_digit])
+            xoffsets[i_digit] = xc - (28/2.)
+            yoffsets[i_digit] = yc - (28/2.)
+
+
+    fig = pyplot.figure(figsize=(6., 6.))
+    ax1 = pyplot.subplot2grid((4, 4), (0, 0), rowspan=1, colspan=3)
+    ax2 = pyplot.subplot2grid((4, 4), (1, 3), rowspan=3, colspan=1)
+    ax0 = pyplot.subplot2grid((4, 4), (1, 0), rowspan=3, colspan=3, sharex=ax1, sharey=ax2)
+    fig.subplots_adjust(wspace=0, hspace=0, left=0.13, right=0.98, bottom=0.13, top=0.98)
+
+    for ax in [ax0, ax1, ax2]:
+        ax.minorticks_on()
+
+    ax0.set_xlabel('$\Delta$x (pixels)', size=14)
+    ax0.set_ylabel('$\Delta$y (pixels)', size=14)
+    ax1.set_ylabel('Number', size=14)
+    ax2.set_xlabel('Number', size=14)
+
+    xlo, xhi = xoffsets.min(), xoffsets.max()
+    ylo, yhi = yoffsets.min(), yoffsets.max()
+    ax0.axis([xlo-(xhi-xlo)*0.9, xhi+(xhi-xlo)*0.9, 
+              ylo-(yhi-ylo)*0.9, yhi+(yhi-ylo)*0.9])
+
+    ax0.axvline(0, color='k', lw=1)
+    ax0.axhline(0, color='k', lw=1)
+    ax1.axvline(0, color='k', lw=1)
+    ax2.axhline(0, color='k', lw=1)
+
+    ax0.plot(xoffsets, yoffsets, ls='', marker='o', ms=2, mfc='r', mec='k', mew=1)
+    ax1.hist(xoffsets, histtype='step', color='r', lw=2, bins=35)
+    ax2.hist(yoffsets, histtype='step', color='r', lw=2, bins=35, orientation='horizontal')
+
+    ax1.set_ylim(10, ax1.axis()[3])
+    ax2.set_xlim(10, ax2.axis()[1])
+
+    ax0.xaxis.set_tick_params(rotation=30)
+    ax0.yaxis.set_tick_params(rotation=30)
+    ax1.yaxis.set_tick_params(rotation=30)
+    ax2.xaxis.set_tick_params(rotation=30)
+
+
+
+    return fig, (ax0, ax1, ax2)
 
 
