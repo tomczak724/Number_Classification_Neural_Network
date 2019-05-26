@@ -19,7 +19,7 @@ def main():
     #numpy.random.shuffle(inds)
     #inds = inds[0:n]
 
-    nc1 = NumberClassifier(N_backprop=100, N_neurons=[28, 28])
+    nc1 = NumberClassifier(N_backprop=9000, N_neurons=[28, 28])
     #nc1.train_on(data_test[inds], labels_test[inds])
     nc1.train_on(data_train, labels_train)
 
@@ -95,7 +95,7 @@ class NumberClassifier(object):
         self.training_progress['f_correct'] = arr[:,3].astype(int)
 
 
-    def train_on(self, data_train, labels_train):
+    def train_on(self, data_train, labels_train, n_subsamples=10):
 
         if self.verbose == True:
             utils.print_data_stats(data_train, labels_train)
@@ -103,6 +103,9 @@ class NumberClassifier(object):
         ###  reading dimensions of training data
         n_digits = data_train.shape[0]
         n_pixels = data_train.shape[1]
+
+        ###  breaking training data into subsamples
+        subsample_inds = numpy.linspace(0, n_digits, n_subsamples+1).astype(int)
 
         ###  initializing random weights/biases if not provided
         if self.weights is None:
@@ -118,8 +121,15 @@ class NumberClassifier(object):
 
             tstart = time.time()
 
+            ###  grabbing a random subsample from the training data
+            i_ss = numpy.random.randint(0, n_subsamples)
+            i_1, i_2 = subsample_inds[i_ss], subsample_inds[i_ss+1]
+            data_train_sub = data_train[i_1:i_2]
+            labels_train_sub = labels_train[i_1:i_2]
+            n_digits_sub = data_train_sub.shape[0]
+
             ###  array for storing guesses
-            guesses = numpy.zeros(n_digits)
+            guesses = numpy.zeros(n_digits_sub)
 
             ###  arrays for storing gradients
             grad_weights = [numpy.zeros(w.shape) for w in self.weights]
@@ -127,14 +137,14 @@ class NumberClassifier(object):
 
 
             ###  looping through digits
-            for i_digit in range(n_digits):
+            for i_digit in range(n_digits_sub):
 
                 ###  setting target activations for output layer
                 target = numpy.zeros(10)
-                target[labels_train[i_digit]] = 1
+                target[labels_train_sub[i_digit]] = 1
 
                 ###  forward propagating data through network
-                zs, activations = self._forward_propagate(data_train[i_digit])
+                zs, activations = self._forward_propagate(data_train_sub[i_digit])
 
                 ###  back propagating, calculating gradients to biases and weights
                 grad_weights_i, grad_biases_i = self._back_propagate(zs, activations, target)
@@ -153,8 +163,8 @@ class NumberClassifier(object):
             for i_layer in range(self.N_layers-1):
 
                 ###  averaging the gradient sums
-                grad_biases[i_layer] /= n_digits
-                grad_weights[i_layer] /= n_digits
+                grad_biases[i_layer] /= n_digits_sub
+                grad_weights[i_layer] /= n_digits_sub
 
                 ###  updating weights and biases
                 self.biases[i_layer] -= self.eta * grad_biases[i_layer]
@@ -163,12 +173,12 @@ class NumberClassifier(object):
 
             ###  writing summary stats to file
             n_unique = numpy.unique(guesses).shape[0]
-            n_correct = (guesses - labels_train).tolist().count(0)
+            n_correct = (guesses - labels_train_sub).tolist().count(0)
 
             self.training_progress['iteration'].append(i_backprop)
             self.training_progress['n_unique'].append(n_unique)
             self.training_progress['n_correct'].append(n_correct)
-            self.training_progress['f_correct'].append(n_correct/n_digits)
+            self.training_progress['f_correct'].append(n_correct/n_digits_sub)
 
             self.save_network()
             self.save_training_progress()
@@ -176,7 +186,7 @@ class NumberClassifier(object):
             tstop = time.time()
 
             if self.verbose:
-                print('%4i, %2i, %4i, %.3f (%i seconds elapsed)' % (i_backprop+1, n_unique, n_correct, n_correct/n_digits, tstop-tstart))
+                print('%4i, %2i, %4i, %.3f (%i seconds elapsed)' % (i_backprop+1, n_unique, n_correct, n_correct/n_digits_sub, tstop-tstart))
 
 
     def _initialize_random_weights(self, len_data):
