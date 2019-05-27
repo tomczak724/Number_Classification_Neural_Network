@@ -7,6 +7,7 @@ import json
 import utils
 import numpy
 import matplotlib
+from NumberClassifier import NumberClassifier
 from scipy import signal
 from matplotlib import pyplot
 pyplot.ion()
@@ -22,10 +23,11 @@ class DigitCanvas(object):
 
         self.fig = pyplot.figure(figsize=(7,5))
         self.ax_canvas = pyplot.subplot2grid((7,7), (0,0), rowspan=7, colspan=5, aspect='equal', label='canvas')
-        self.ax_clear = pyplot.subplot2grid((7,7), (2,5), rowspan=1, colspan=2, label='clear button')
-        self.ax_submit = pyplot.subplot2grid((7,7), (3,5), rowspan=1, colspan=2, label='submit button')
+        self.ax_clear = pyplot.subplot2grid((7,7), (0,5), rowspan=1, colspan=2, facecolor='#cccccc', label='clear button')
+        self.ax_submit = pyplot.subplot2grid((7,7), (1,5), rowspan=1, colspan=2, facecolor='#cccccc', label='submit button')
         self.fig.subplots_adjust(left=0.03, right=0.97, hspace=0.4, wspace=0.2)
 
+        self.neural_network = None
 
         ###  turning off axis labels
         for ax in [self.ax_canvas, self.ax_clear, self.ax_submit]:
@@ -59,7 +61,8 @@ class DigitCanvas(object):
 
         self.sketch_plot = self.ax_canvas.plot(0, 0, color='k', lw=10)[0]
         self.image_plot = self.ax_canvas.imshow(self.image_data, interpolation='none', vmin=0, vmax=1, cmap=pyplot.cm.Greens)
-
+        self.text_probs_plot = self.ax_canvas.text(1.1, 0.05, '', size=12, transform=self.ax_canvas.transAxes)
+        self.text_guess_plot = self.ax_canvas.text(0.5, 0.98, '', size=16, transform=self.ax_canvas.transAxes, ha='center', va='top', fontweight='bold', family='sans-serif', color='r')
 
     def _onClick(self, event):
 
@@ -76,6 +79,9 @@ class DigitCanvas(object):
 
             self.image_data = numpy.zeros((self.image_size, self.image_size))
             self.image_plot.set_data(self.image_data)
+
+            self.text_probs_plot.set_text('')
+            self.text_guess_plot.set_text('')
             pyplot.draw()
 
         ###  handling SUBMIT button click
@@ -109,14 +115,39 @@ class DigitCanvas(object):
             self.image_data[(ydata_final, xdata_final)] = 1
 
             ###  smoothing and normalizing image data
-            kernel = [[1,3,1],[3,2,3],[1,3,1]]
+            kernel = [[0,1,0],
+                      [1,1,1],
+                      [0,1,0]]
             self.image_data = signal.convolve2d(self.image_data, kernel, mode='same')
+
+            ###  centering and normalizing image
+            self.image_data = utils.center_image(self.image_data.flatten())
+            self.image_data = self.image_data.reshape((self.image_size, self.image_size))
             self.image_data /= self.image_data.max()
 
             self.image_plot.set_data(self.image_data)
             self.sketch_plot.set_data((0,0))
             pyplot.draw()
 
+            if self.neural_network is not None:
+
+                ###  inverting image along y-axis (MNIST data format)
+                im = self.image_data[::-1, :].flatten()
+                guess = self.neural_network.guess_digit(im)
+
+                ###  indicating best guess
+                text1 = 'Looks like a %i to me!' % guess
+                self.text_guess_plot.set_text(text1)
+
+                ###  getting probabilities
+                zs, activations = self.neural_network._forward_propagate(im)
+                probs = activations[-1] / activations[-1].sum()
+
+                text = 'Digit probabilities\n'
+                for i, p in enumerate(probs):
+                    text += '\n    %i  =  %.1f %%' % (i, p*100)
+
+                self.text_probs_plot.set_text(text)
 
 
     def _onClickRelease(self, event):
@@ -132,8 +163,14 @@ class DigitCanvas(object):
             pyplot.draw()
 
 
+    def load_neural_network(self, fname):
+        self.neural_network = NumberClassifier()
+        self.neural_network.load_weights_biases(fname)
+
+
 if __name__ == '__main__':
 
     dc = DigitCanvas()
+    dc.load_neural_network('../output/neural_network_28x28_backprop9000.json')
 
 

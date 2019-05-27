@@ -19,7 +19,7 @@ def main():
     #numpy.random.shuffle(inds)
     #inds = inds[0:n]
 
-    nc1 = NumberClassifier(N_backprop=9000, N_neurons=[28, 28])
+    nc1 = NumberClassifier(N_backprop=900, N_neurons=[28, 28])
     #nc1.train_on(data_test[inds], labels_test[inds])
     nc1.train_on(data_train, labels_train)
 
@@ -30,7 +30,7 @@ def main():
 
 class NumberClassifier(object):
 
-    def __init__(self, N_backprop, N_neurons=[16, 16], eta=5., verbose=True):
+    def __init__(self, N_backprop=10, N_neurons=[16, 16], eta=5., verbose=True):
         '''
         Description
         -----------
@@ -51,6 +51,8 @@ class NumberClassifier(object):
         ----------
             [1] MNIST database
                 http://yann.lecun.com/exdb/mnist/
+            [2] 3Blue1Brown
+                https://www.youtube.com/watch?v=aircAruvnKk
         '''
 
         self.N_backprop = N_backprop
@@ -314,11 +316,14 @@ class NumberClassifier(object):
         zs, activations = self._forward_propagate(data)
         probabilities = activations[-1] / activations[-1].sum()
 
+        ###  initializing figure
         fig, (ax1, ax2) = pyplot.subplots(ncols=2, figsize=(9.5, 4.5))
         fig.subplots_adjust(left=0.08, top=0.92, right=0.96, bottom=0.1)
 
         ax1.set_xlabel('Digit Label', size=14)
         ax1.set_ylabel('Probability', size=14)
+        ax1.minorticks_on()
+        ax1.tick_params(axis='x', which='minor', bottom=False)
 
         ###  plotting digit image
         ax2.xaxis.set_visible(False)
