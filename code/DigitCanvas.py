@@ -8,7 +8,7 @@ import utils
 import numpy
 import matplotlib
 from NumberClassifier import NumberClassifier
-from scipy import signal
+from scipy import signal, ndimage
 from matplotlib import pyplot
 pyplot.ion()
 
@@ -53,6 +53,7 @@ class DigitCanvas(object):
 
         self.mouse_depressed = False
         self.sketch_coords = {'x':[], 'y':[]}
+        self.sketch_collection = []
 
         cid = self.fig.canvas.mpl_connect('button_press_event', self._onClick)
         cid = self.fig.canvas.mpl_connect('button_release_event', self._onClickRelease)
@@ -90,10 +91,6 @@ class DigitCanvas(object):
             xdata = numpy.array(self.sketch_coords['x']).astype(float)
             ydata = numpy.array(self.sketch_coords['y']).astype(float)
 
-            inds_keep = (~numpy.isnan(xdata)) & (~numpy.isnan(xdata)) & (xdata>=0) & (ydata>=0)
-            xdata = xdata[inds_keep]
-            ydata = ydata[inds_keep]
-
             ###  interpolating by factor of 100x
             ###  looping over all adjacent pairs of coordinates
             xdata_final = []
@@ -103,10 +100,11 @@ class DigitCanvas(object):
                 x2, y2 = xdata[i+1], ydata[i+1]
 
                 ###  interpolating by factor of 100x
-                x_100 = numpy.linspace(x1, x2, 100)
-                y_100 = numpy.linspace(y1, y2, 100)
-                xdata_final += x_100.tolist()
-                ydata_final += y_100.tolist()
+                if not numpy.isnan([x1, x2, y1, y2]).any():
+                    x_100 = numpy.linspace(x1, x2, 100)
+                    y_100 = numpy.linspace(y1, y2, 100)
+                    xdata_final += x_100.tolist()
+                    ydata_final += y_100.tolist()
 
             xdata_final = numpy.array(xdata_final).round().astype(int)
             ydata_final = numpy.array(ydata_final).round().astype(int)
@@ -152,6 +150,8 @@ class DigitCanvas(object):
 
     def _onClickRelease(self, event):
         self.mouse_depressed = False
+        self.sketch_coords['x'].append(numpy.nan)
+        self.sketch_coords['y'].append(numpy.nan)
 
 
     def _onMotion(self, event):
@@ -168,9 +168,12 @@ class DigitCanvas(object):
         self.neural_network.load_weights_biases(fname)
 
 
+
+
 if __name__ == '__main__':
 
     dc = DigitCanvas()
     dc.load_neural_network('../output/neural_network_28x28_backprop9000.json')
+
 
 
