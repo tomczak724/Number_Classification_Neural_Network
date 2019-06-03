@@ -304,10 +304,16 @@ class NumberClassifier(object):
         numpy.savetxt(fname, arr, delimiter=',', header=','.join(self.training_progress.keys()), fmt=('%i', '%i', '%i', '%.4f'))
 
 
+    def get_probabilities(self, data):
+        '''Returns probabilities for all digits from the data for the given digit'''
+        zs, activations = self._forward_propagate(data)
+        return activations[-1] / activations[-1].sum()
+
+
     def guess_digit(self, data):
         '''Returns the best guess from the data for the given digit'''
-        zs, activations = self._forward_propagate(data)
-        return activations[-1].tolist().index(activations[-1].max())
+        probs = self.get_probabilities(data)
+        return probs.tolist().index(probs.max())
 
 
     def plot_guess_overview(self, data, true_label):
