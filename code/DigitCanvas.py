@@ -1,19 +1,10 @@
 
-import os
-import pdb
-import sys
-import time
-import json
 import utils
 import numpy
 import matplotlib
-from NumberClassifier import NumberClassifier
-from scipy import signal, ndimage
+from scipy import signal
 from matplotlib import pyplot
-pyplot.ion()
-
-
-
+from NumberClassifier import NumberClassifier
 
 
 class DigitCanvas(object):
@@ -173,6 +164,7 @@ class DigitCanvas(object):
 
         if (event.inaxes is not None):
             self.last_panel_clicked = event.inaxes.get_label()
+
 
     def _onClickRelease(self, event):
         self.mouse_depressed = False
