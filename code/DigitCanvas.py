@@ -191,7 +191,7 @@ class DigitCanvas(object):
 if __name__ == '__main__':
 
     dc = DigitCanvas()
-    dc.load_neural_network('../output/neural_network_28x28_backprop9000.json')
+    dc.load_neural_network('../output/neural_network_28x28.json')
 
 
 
