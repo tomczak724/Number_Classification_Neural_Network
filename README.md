@@ -1,11 +1,11 @@
 # Number Classification Neural Network
 
 Below is the tale of my pioneering journey into the world of neural networks.
-The goal of this project is to develop the code to create a deep-learning neural network designed to classify hand-written digits.
+The goal of this project is to develop the code to create a deep learning neural network designed to classify images of hand-written digits.
 Although there are some great existing libraries with "ready-made" code for this problem (e.g. [scikit-learn](https://scikit-learn.org/stable/modules/neural_networks_supervised.html), [tensorflow](https://www.tensorflow.org/tutorials/keras/basic_classification)) my aim is to write everything *mostly* from scratch.
-I also hope to do a good enough job documenting my workflow to serve as a learning tool for any interested readers.
+I also hope to do a good enough job documenting the workflow to serve as a learning tool for any interested readers.
 
-However, before going on further I must acknowledge the superb educational/instructional video series from Grant Sanderson's YouTube channel [3Blue1Brown](https://www.youtube.com/watch?v=aircAruvnKk) which layed the foundation for this project.
+Before going on further I must acknowledge the superb educational/instructional video series from Grant Sanderson's YouTube channel [3Blue1Brown](https://www.youtube.com/watch?v=aircAruvnKk) which layed the foundation for this project.
 
 
 # Data
@@ -16,7 +16,7 @@ Each image is 28x28 pixels in size and has been preprocessed to be centered in t
 
 Here are a few examples of the images:
 
-![alt text](https://github.com/tomczak724/Number_Classification_Neural_Network/figures/MNIST_examples.png)
+![alt text](./figures/MNIST_examples.png)
 
 
 
