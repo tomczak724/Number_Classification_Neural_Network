@@ -199,6 +199,39 @@ def calc_xy_center(data):
     return xcenter, ycenter
 
 
+def plot_example_images(data, labels):
+    '''Plots a handful of example MNIST images'''
+
+    nrows, ncols = 2, 6
+    fig, axs = pyplot.subplots(nrows=nrows, ncols=ncols, figsize=(9, 9*1.08*nrows/ncols))
+    fig.subplots_adjust(left=0.01, right=0.99, top=0.94, bottom=0.01, hspace=0.2, wspace=0.05)
+
+    ###  configuring panels
+    for ax in axs.flatten():
+
+        ax.xaxis.set_visible(False)
+        ax.yaxis.set_visible(False)
+
+        for i in range(28):
+            ax.axvline(i-0.5, color='gray', lw=1, alpha=0.3)
+            ax.axhline(i-0.5, color='gray', lw=1, alpha=0.3)
+
+    ###  selecting random images to plot
+    n = len(axs.flatten())
+    for i_ax, i_digit in enumerate(numpy.random.randint(0, len(labels), n)):
+        data_i = data[i_digit]
+        label_i = labels[i_digit]
+
+        ax = axs.flatten()[i_ax]
+        d = data_i.reshape((28,28))[::-1, :]
+        ax.imshow(d, interpolation='none', cmap=pyplot.cm.Greens)
+
+        ax.text(0.03, 1.01, 'label = %i' % label_i, size=11, weight='bold', color='r', transform=ax.transAxes, ha='left', va='bottom')
+
+    return fig, axs
+
+
+
 def plot_centering_example():
     '''Generates a plot that illustrates the centering of the MNIST digit images'''
 

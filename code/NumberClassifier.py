@@ -14,13 +14,7 @@ def main():
     data_train, labels_train = utils.load_MNIST_data(set_type='train', centering=False)
     #data_test, labels_test = utils.load_MNIST_data(set_type='test', centering=False)
 
-    #n = 5000
-    #inds = numpy.arange(0, len(labels_test))
-    #numpy.random.shuffle(inds)
-    #inds = inds[0:n]
-
-    nc1 = NumberClassifier(N_backprop=900, N_neurons=[28, 28])
-    #nc1.train_on(data_test[inds], labels_test[inds])
+    nc1 = NumberClassifier(N_backprop=1000, N_neurons=[16, 16])
     nc1.train_on(data_train, labels_train)
 
     nc1.save_network()
