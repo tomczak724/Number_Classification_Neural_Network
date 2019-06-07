@@ -24,7 +24,7 @@ def main():
 
 class NumberClassifier(object):
 
-    def __init__(self, N_backprop=10, N_neurons=[16, 16], eta=5., verbose=True):
+    def __init__(self, N_neurons=[16, 16], N_backprop=10, eta=5., verbose=True):
         '''
         Description
         -----------
@@ -34,10 +34,10 @@ class NumberClassifier(object):
 
         Parameters
         ----------
-            N_backprop : int
-                Number of back-propagations to perform for training
             N_neurons : array
                 Number of neurons in hidden layers
+            N_backprop : int
+                Number of back-propagations to perform for training
             eta : float
                 Learning rate
 
@@ -49,12 +49,13 @@ class NumberClassifier(object):
                 https://www.youtube.com/watch?v=aircAruvnKk
         '''
 
-        self.N_backprop = N_backprop
         self.N_neurons = N_neurons
         self.N_layers = len(N_neurons) + 2
+        self.N_backprop = N_backprop
         self.eta = eta
         self.verbose = verbose
 
+        ###  weights and biases for each neuron in each layer
         self.weights = None
         self.biases = None
 
@@ -76,10 +77,12 @@ class NumberClassifier(object):
         self.N_neurons = [len(b) for b in self.biases[:-1]]
         self.N_layers = len(self.N_neurons) + 2
 
+
     def load_training_progress(self, fname='../output/training_progress.json'):
         '''Loads existing progress file from previous training'''
 
         self.training_progress = json.load(open(fname, 'r'))
+
 
     def load_training_progress_csv(self, fname='../output/training_progress.json'):
         '''Loads existing progress file from previous training'''

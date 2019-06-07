@@ -1,4 +1,5 @@
 # Number Classification Neural Network
+___
 
 Below is the tale of my pioneering journey into the world of neural networks.
 The goal of this project is to develop the code to create a deep learning neural network designed to classify images of hand-written digits.
@@ -8,8 +9,14 @@ I also hope to do a good enough job documenting the workflow to serve as a learn
 Before going on further I must acknowledge the superb educational/instructional video series from Grant Sanderson's YouTube channel [3Blue1Brown](https://www.youtube.com/watch?v=aircAruvnKk) which layed the foundation for this project.
 
 
+### Outline
 
-## Data
+ * [About the Data](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#about-the-data)
+ * [About the Network](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#about-the-network)
+
+
+### About the Data
+___
 
 Training and testing data are taken from the well-known and widely-utilized [MNIST database](http://yann.lecun.com/exdb/mnist/).
 This database includes a training set of 60,000 labeled images and a test set of 10,000 labeled images; however, because there are no intrinsic differences between the two you can think of it as one aggregate set of 70,000 images.
@@ -21,7 +28,8 @@ Here are a few examples of the images:
 
 
 
-## The Neural Network
+### About the Network
+___
 
 The code supports defining a network with an arbitrary number of hidden layers each containing an arbitrary number of neurons.
 For testing purposes I decided to go with two hidden layers each containing 28 neruons.
