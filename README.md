@@ -1,5 +1,4 @@
 # Number Classification Neural Network
-___
 
 Below is the tale of my pioneering journey into the world of neural networks.
 The goal of this project is to develop the code to create a deep learning neural network designed to classify images of hand-written digits.
@@ -13,6 +12,7 @@ Before going on further I must acknowledge the superb educational/instructional 
 
  * [About the Data](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#about-the-data)
  * [About the Network](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#about-the-network)
+ * [Tutorial: Digit Canvas](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#tutorial:-digit-canvas) - Draw your own numbers and have the network guess them
 
 
 ### About the Data
@@ -24,7 +24,7 @@ Each image is 28x28 pixels in size and has been preprocessed to be centered in t
 
 Here are a few examples of the images:
 
-![alt text](./figures/MNIST_examples.png)
+![image not found](./figures/MNIST_examples.png)
 
 
 
@@ -38,3 +38,33 @@ For testing purposes I decided to go with two hidden layers each containing 28 n
 
 
 
+### Tutorial: Digit Canvas
+___
+
+Digit Canvas is an interactive figure which allows you to draw your own numerals and have the network guess them.
+
+First you must clone the repository to your machine.
+Next, open a terminal and switch to the `code` directory within it and execute the python script.
+
+```
+git clone https://github.com/tomczak724/Number_Classification_Neural_Network.git
+
+cd Number_Classification_Neural_Network/code/
+
+python DigitCanvas.py
+```
+
+If all went well a figure like this should appear:
+
+![image not found](./figures/digit_canvas_1.png)
+
+Simply use your mouse to draw your number of choice in the large square panel on the left.
+
+![image not found](./figures/digit_canvas_2.png)
+
+Once you're finished click the **SUBMIT** button to have the network guess your digit.
+Click the **CLEAR** button to reset.
+
+![image not found](./figures/digit_canvas_3.png)
+
+The panel to the lower-right shows the network's confidence in all 10 possible digits.

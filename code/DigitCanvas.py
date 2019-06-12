@@ -27,8 +27,8 @@ class DigitCanvas(object):
             ax.yaxis.set_visible(False)
 
         ###  labeling probabilities panel
-        self.ax_probs.set_xlabel('Digit Label', size=14)
-        self.ax_probs.set_ylabel('Probability (%)', size=14)
+        self.ax_probs.set_xlabel('Digit Label', size=14, family='serif')
+        self.ax_probs.set_ylabel('Probability (%)', size=14, family='serif')
         self.ax_probs.minorticks_on()
         self.ax_probs.set_ylim(-4, 112)
         self.ax_probs.tick_params(axis='x', which='minor', bottom=False)
@@ -49,7 +49,7 @@ class DigitCanvas(object):
             self.ax_canvas.axhline(i-0.5, color='gray', lw=1, alpha=0.3)
 
         ###  adding button labels
-        self.ax_canvas.set_title('Draw a single-digit number', size=14)
+        self.ax_canvas.set_title('Draw a single-digit number', size=14, family='serif')
         self.ax_clear.text(0.5, 0.5, 'CLEAR', fontweight='bold', family='sans-serif', size=14, ha='center', va='center')
         self.ax_submit.text(0.5, 0.5, 'SUBMIT', fontweight='bold', family='sans-serif', size=14, ha='center', va='center')
 
@@ -160,7 +160,7 @@ class DigitCanvas(object):
                 else:
                     title = 'I\'m not really sure, but I guess %i?' % guess
 
-                self.ax_probs.set_title(title, color='r', fontweight='bold', family='sans-serif', size=14)
+                self.ax_probs.set_title(title, color='r', fontweight='bold', family='serif', size=16)
 
         if (event.inaxes is not None):
             self.last_panel_clicked = event.inaxes.get_label()
