@@ -6,6 +6,7 @@ import time
 import json
 import utils
 import numpy
+import itertools
 from matplotlib import pyplot
 
 
@@ -14,11 +15,13 @@ def main():
     data_train, labels_train = utils.load_MNIST_data(set_type='train', centering=False)
     #data_test, labels_test = utils.load_MNIST_data(set_type='test', centering=False)
 
-    nc1 = NumberClassifier(N_backprop=1000, N_neurons=[16, 16])
-    nc1.train_on(data_train, labels_train)
+    n_neurons = [10, 15, 20, 25, 30]
+    for n1, n2 in itertools.product(n_neurons, n_neurons):
 
-    nc1.save_network()
-    nc1.save_training_progress()
+        print('\nTraining %ix%i network\n' % (n1, n2))
+
+        NN = NumberClassifier(N_neurons=[n1, n2], N_backprop=500)
+        NN.train_on(data_train, labels_train)
 
 
 
@@ -255,7 +258,7 @@ class NumberClassifier(object):
             for n in self.N_neurons:
                 str_layers += '%ix' % n
 
-            fname = '../output/neural_network_%s_backprop%i.json' % (str_layers[:-1], self.N_backprop)
+            fname = '../output/neural_network_%s.json' % str_layers[:-1]
 
         weights = [w.tolist() for w in self.weights]
         biases = [b.tolist() for b in self.biases]
@@ -276,7 +279,7 @@ class NumberClassifier(object):
             for n in self.N_neurons:
                 str_layers += '%ix' % n
 
-            fname = '../output/training_progress_%s_backprop%i.json' % (str_layers[:-1], self.N_backprop)
+            fname = '../output/training_progress_%s.json' % str_layers[:-1]
 
         with open(fname, 'w') as outer_json:
             json.dump(self.training_progress, outer_json)
@@ -291,7 +294,7 @@ class NumberClassifier(object):
             for n in self.N_neurons:
                 str_layers += '%ix' % n
 
-            fname = '../output/training_progress_%s_backprop%i.csv' % (str_layers[:-1], self.N_backprop)
+            fname = '../output/training_progress_%s.csv' % str_layers[:-1]
 
         ###  converting training progress to array
         arr = numpy.zeros((len(self.training_progress['iteration']), len(self.training_progress)))

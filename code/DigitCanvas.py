@@ -14,8 +14,8 @@ class DigitCanvas(object):
 
         self.fig = pyplot.figure(figsize=(10,5))
         self.ax_canvas = pyplot.subplot2grid((7,12), (0,0), rowspan=7, colspan=5, aspect='equal', label='canvas')
-        self.ax_clear = pyplot.subplot2grid((7,12), (0,5), rowspan=1, colspan=2, facecolor='#cccccc', label='clear button')
-        self.ax_submit = pyplot.subplot2grid((7,12), (1,5), rowspan=1, colspan=2, facecolor='#cccccc', label='submit button')
+        self.ax_clear = pyplot.subplot2grid((7,12), (0,6), rowspan=1, colspan=2, facecolor='#cccccc', label='clear button')
+        self.ax_submit = pyplot.subplot2grid((7,12), (1,6), rowspan=1, colspan=2, facecolor='#cccccc', label='submit button')
         self.ax_probs = pyplot.subplot2grid((7,12), (3, 6), rowspan=4, colspan=6, label='probabilities')
         self.fig.subplots_adjust(left=0.03, right=0.97, hspace=0.4, wspace=0.2)
 
@@ -152,11 +152,11 @@ class DigitCanvas(object):
 
                 ###  indicating best guess
                 if probs.max() > 80:
-                    title = 'Looks like a %i to me!' % guess
+                    title = 'Looks like %i to me!' % guess
                 elif probs.max() > 70:
-                    title = 'Looks mostly like a %i to me' % guess
+                    title = 'Looks mostly like %i to me' % guess
                 elif probs.max() > 60:
-                    title = 'Looks kind of like a %i to me' % guess
+                    title = 'Looks kind of like %i to me' % guess
                 else:
                     title = 'I\'m not really sure, but I guess %i?' % guess
 
@@ -187,11 +187,8 @@ class DigitCanvas(object):
 
 
 
-
 if __name__ == '__main__':
 
     dc = DigitCanvas()
     dc.load_neural_network('../output/neural_network_28x28.json')
-
-
-
+    pyplot.show()
