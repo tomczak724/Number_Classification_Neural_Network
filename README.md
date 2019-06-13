@@ -55,12 +55,10 @@ python DigitCanvas.py
 If all went well a figure like this should appear:
 
 <img src="./figures/digit_canvas_1.png" width="660">
-![image not found](./figures/digit_canvas_1.png)
 
 Simply use your mouse to draw your number of choice in the large square panel on the left.
 
 <img src="./figures/digit_canvas_2.png" width="660">
-![image not found](./figures/digit_canvas_2.png)
 
 Once you're finished click the **SUBMIT** button to have your drawing digitized, centered, and processed by the network to guess your digit.
 
@@ -68,5 +66,4 @@ The panel to the lower-right will indicate the network's best guess as well as i
 Click the **CLEAR** button to reset.
 
 <img src="./figures/digit_canvas_3.png" width="660">
-![image not found](./figures/digit_canvas_3.png)
 
