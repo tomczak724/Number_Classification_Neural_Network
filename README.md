@@ -54,7 +54,7 @@ python DigitCanvas.py
 
 If all went well a figure like this should appear:
 
-<img src="./figures/digit_canvas_1.png" width="48">
+<img src="./figures/digit_canvas_1.png" width="500">
 ![image not found](./figures/digit_canvas_1.png)
 
 Simply use your mouse to draw your number of choice in the large square panel on the left.
