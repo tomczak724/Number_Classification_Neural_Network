@@ -48,23 +48,23 @@ Next, open a terminal and switch to the `code` directory within it and execute t
 
 ```
 git clone https://github.com/tomczak724/Number_Classification_Neural_Network.git
-
 cd Number_Classification_Neural_Network/code/
-
 python DigitCanvas.py
 ```
 
 If all went well a figure like this should appear:
 
+<img src="./figures/digit_canvas_1.png" width="48">
 ![image not found](./figures/digit_canvas_1.png)
 
 Simply use your mouse to draw your number of choice in the large square panel on the left.
 
 ![image not found](./figures/digit_canvas_2.png)
 
-Once you're finished click the **SUBMIT** button to have the network guess your digit.
+Once you're finished click the **SUBMIT** button to have your drawing digitized, centered, and processed by the network to guess your digit.
+
+The panel to the lower-right will indicate the network's best guess as well as it's confidence in all 10 possible digits.
 Click the **CLEAR** button to reset.
 
 ![image not found](./figures/digit_canvas_3.png)
 
-The panel to the lower-right shows the network's confidence in all 10 possible digits.
