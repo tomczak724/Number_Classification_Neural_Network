@@ -29,9 +29,11 @@ class DigitCanvas(object):
         ###  labeling probabilities panel
         self.ax_probs.set_xlabel('Digit Label', size=14, family='serif')
         self.ax_probs.set_ylabel('Probability (%)', size=14, family='serif')
-        self.ax_probs.minorticks_on()
+        self.ax_probs.minorticks_off()
         self.ax_probs.set_ylim(-4, 112)
         self.ax_probs.tick_params(axis='x', which='minor', bottom=False)
+        self.ax_probs.xaxis.set_tick_params(top=False)
+        self.ax_probs.yaxis.set_tick_params(right=False)
 
         self.ax_probs.xaxis.set_ticks(range(10))
         for i in numpy.arange(-0.5,10,1):

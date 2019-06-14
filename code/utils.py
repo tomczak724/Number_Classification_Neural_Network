@@ -8,7 +8,7 @@ from scipy import ndimage
 from matplotlib import pyplot
 
 
-def load_MNIST_data(set_type='train', centering=True, normalize=True):
+def load_MNIST_data(set_type='train', normalize=True):
     '''Reads the MNIST data binaries and returns as arrays.
     Specify either "train" or "test" data'''
 
@@ -43,17 +43,6 @@ def load_MNIST_data(set_type='train', centering=True, normalize=True):
         byte_data = fopen_images.read(Nrows*Ncols)
         image_data = struct.unpack('B'*(Nrows*Ncols), byte_data)
         digits_data[i] = numpy.array(image_data)
-
-    ###  centering images
-    print('')
-    if centering == True:
-        for i in range(Ntot):
-
-            text = '\r[%2i%%] centering digit images' % (i*100./(Ntot-1))
-            sys.stdout.write(text)
-            sys.stdout.flush()
-
-            digits_data[i] = center_image(digits_data[i])
 
     print('')
     fopen_labels.close()
