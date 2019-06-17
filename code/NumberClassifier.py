@@ -12,8 +12,8 @@ from matplotlib import pyplot
 
 def main():
 
-    data_train, labels_train = utils.load_MNIST_data(set_type='train', centering=False)
-    #data_test, labels_test = utils.load_MNIST_data(set_type='test', centering=False)
+    data_train, labels_train = utils.load_MNIST_data(set_type='train')
+    #data_test, labels_test = utils.load_MNIST_data(set_type='test')
 
     n_neurons = [10, 15, 20, 25, 30]
     for n1, n2 in itertools.product(n_neurons, n_neurons):
