@@ -31,8 +31,9 @@ Here are a few examples of the images:
 ### About the Network
 ___
 
-The code supports defining a network with an arbitrary number of hidden layers each containing an arbitrary number of neurons.
-For testing purposes I decided to go with two hidden layers each containing 28 neruons.
+The neural network infrastructure is encapsulated in the `NumberClassifier` object.
+It generates the infrastructure for a fully-connected neural network with an arbitrary number of hidden layers each containing an arbitrary number of neurons (*Note: Convolutional NNs generally tend to do better with image classification, which I may explore as an extension of this project*).
+
 
 
 
@@ -41,7 +42,10 @@ For testing purposes I decided to go with two hidden layers each containing 28 n
 ### Tutorial: Digit Canvas
 ___
 
-Digit Canvas is an interactive figure which allows you to draw your own numerals and have the network guess them.
+`DigitCanvas` is an interactive figure which allows you to draw your own numerals and have the network guess them.
+The infrastructure for this figure is also encapsulated as an object (surprised?).
+The interactivity is entirely handled my the `mpl_connect` method with several matplotlib event classes.
+
 
 First you'll need to clone the repository to your machine.
 Next, open a terminal and switch to the `code` directory within it and execute the python script `DigitCanvas.py`.
