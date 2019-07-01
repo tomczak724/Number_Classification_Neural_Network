@@ -32,7 +32,7 @@ Here are a few examples of the images:
 ### About the Network
 ___
 
-The neural network infrastructure is encapsulated in the `NumberClassifier` object.
+The neural network code is encapsulated in the `NumberClassifier` object.
 It generates the infrastructure for a fully-connected neural network with an arbitrary number of hidden layers each containing an arbitrary number of neurons (*Note: Convolutional NNs generally tend to do better with image classification, which I may explore as an extension of this project*).
 
 
@@ -81,8 +81,6 @@ Click the **CLEAR** button to reset.
 ###  References\
 
 [3Blue1Brown](https://www.youtube.com/watch?v=aircAruvnKk) - YouTube channel of excellent visual explainations of topics in mathematics 
-
 [MNIST database](http://yann.lecun.com/exdb/mnist/) - Puplic database of handwritten digits
-
 [matplotlib interactive events](https://matplotlib.org/3.1.0/users/event_handling.html) - Matplotlib's official documentation on event handling
 
