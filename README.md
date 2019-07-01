@@ -13,6 +13,7 @@ Before going on further I must acknowledge the superb educational/instructional 
  * [About the Data](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#about-the-data)
  * [About the Network](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#about-the-network)
  * [Tutorial: Digit Canvas](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#tutorial:-digit-canvas) - Draw your own numbers and have the network guess them
+ * [References](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#references)
 
 
 ### About the Data
@@ -44,7 +45,7 @@ ___
 
 `DigitCanvas` is an interactive figure which allows you to draw your own numerals and have the network guess them.
 The infrastructure for this figure is also encapsulated as an object (surprised?).
-The interactivity is entirely handled my the `mpl_connect` method with several matplotlib event classes.
+The interactivity is entirely handled my the `mpl_connect` method within matplotlib and several `event` classes (I found the official [matplotlib documentation](https://matplotlib.org/3.1.0/users/event_handling.html) on this quite helpful).
 
 
 First you'll need to clone the repository to your machine.
@@ -75,4 +76,13 @@ Click the **CLEAR** button to reset.
 <p align="center">
   <img src="./figures/digit_canvas_3.png" width="660">
 </p>
+
+
+###  References\
+
+[3Blue1Brown](https://www.youtube.com/watch?v=aircAruvnKk) - YouTube channel of excellent visual explainations of topics in mathematics 
+
+[MNIST database](http://yann.lecun.com/exdb/mnist/) - Puplic database of handwritten digits
+
+[matplotlib interactive events](https://matplotlib.org/3.1.0/users/event_handling.html) - Matplotlib's official documentation on event handling
 
