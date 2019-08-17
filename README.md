@@ -12,7 +12,7 @@ Before going on further I must acknowledge the superb educational/instructional 
 
  * [About the Data](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#about-the-data)
  * [About the Network](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#about-the-network)
- * [Tutorial: Digit Canvas](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#tutorial:-digit-canvas) - Draw your own numbers and have the network guess them
+ * [Digit Canvas](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#tutorial:-digit-canvas) - Draw your own numbers and have the network guess them
  * [References](https://github.com/tomczak724/Number_Classification_Neural_Network/blob/master/README.md#references)
 
 

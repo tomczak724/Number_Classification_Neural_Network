@@ -1,9 +1,12 @@
 
 import os
 import sys
+import glob
 import gzip
+import json
 import numpy
 import struct
+import matplotlib
 from scipy import ndimage
 from matplotlib import pyplot
 
@@ -220,7 +223,6 @@ def plot_example_images(data, labels):
     return fig, axs
 
 
-
 def plot_centering_example():
     '''Generates a plot that illustrates the centering of the MNIST digit images'''
 
@@ -325,4 +327,109 @@ def plot_centering_offsets():
 
     return fig, (ax0, ax1, ax2)
 
+
+def plot_cartoon_neural_network():
+
+
+    fig, ax = pyplot.subplots(figsize=(6.5, 6.5))
+    fig.subplots_adjust(left=0, top=1, right=1, bottom=0)
+
+    ax.xaxis.set_visible(False)
+    ax.yaxis.set_visible(False)
+    ax.set_aspect('equal')
+
+    ###  plotting input layer of nodes
+    n_input_nodes = 8
+    x_input = 0
+    y_input = numpy.arange(n_input_nodes) - (n_input_nodes-1)/2.
+    radius = 0.3
+    for i in range(n_input_nodes):
+        c = matplotlib.patches.Circle((x_input, y_input[i]), radius=radius, color='gray')
+        ax.add_artist(c)
+
+    ###  adding title
+    t = ax.text(x_input, (n_input_nodes+1)/2., 'Input\nLayer', size=12, ha='center', va='center')
+
+
+
+    ###  plotting layer 1 of nodes
+    n_layer1_nodes = 5
+    x_layer1 = 4
+    y_layer1 = numpy.arange(n_layer1_nodes) - (n_layer1_nodes-1)/2.
+    for i in range(n_layer1_nodes):
+        c = matplotlib.patches.Circle((x_layer1, y_layer1[i]), radius=radius, color='gray')
+        ax.add_artist(c)
+
+    ###  adding title
+    t = ax.text(x_layer1, (n_layer1_nodes+1)/2., 'Layer 1', size=12, ha='center', va='center')
+
+
+
+    ###  plotting layer 2 of nodes
+    n_layer2_nodes = 5
+    x_layer2 = 8
+    y_layer2 = numpy.arange(n_layer2_nodes) - (n_layer2_nodes-1)/2.
+    for i in range(n_layer2_nodes):
+        c = matplotlib.patches.Circle((x_layer2, y_layer2[i]), radius=radius, color='gray')
+        ax.add_artist(c)
+
+    ###  adding title
+    t = ax.text(x_layer2, (n_layer2_nodes+1)/2., 'Layer 2', size=12, ha='center', va='center')
+
+
+
+    ###  plotting output layer of nodes
+    n_output_nodes = 3
+    x_output = 12
+    y_output = numpy.arange(n_output_nodes) - (n_output_nodes-1)/2.
+    for i in range(n_output_nodes):
+        c = matplotlib.patches.Circle((x_output, y_output[i]), radius=radius, color='gray')
+        ax.add_artist(c)
+
+    ###  adding title
+    t = ax.text(x_output, (n_output_nodes+1)/2., 'Output\nLayer', size=12, ha='center', va='center')
+
+
+
+    ax.axis([-1, 13, -7, 7])
+    return fig
+
+
+def plot_training_progress_cascade():
+
+
+    fig, axs = pyplot.subplots(nrows=5, ncols=5, figsize=(7,6), sharex=True, sharey=True)
+
+    fig.subplots_adjust(hspace=0, wspace=0, left=0.13, top=0.87, bottom=0.01, right=0.99)
+
+    n = [10, 15, 20, 25, 30]
+    for i, n1 in enumerate(n):
+        for j, n2 in enumerate(n):
+            print('plotting %ix%i network' % (n1, n2))
+            fnames =  glob.glob('/media/removable/DEMOGORGON/storage/training_progress_%ix%i*' % (n1, n2))
+            data_all = []
+            for fname in fnames:
+                data = json.load(open(fname, 'r'))
+                data_all.append(data['f_correct'])
+                axs[i][j].plot(data['iteration'], data['f_correct'], color='k', lw=1, alpha=0.15)
+
+                axs[i][j].xaxis.set_ticks([])
+                axs[i][j].yaxis.set_ticks([])
+
+                if j == 0:
+                    axs[i][j].set_ylabel('%i'%n1, size=18, rotation=0, ha='right', va='center')
+                if i == 0:
+                    axs[i][j].set_title('%i'%n2, size=18)
+
+            axs[i][j].plot(data['iteration'], numpy.array(data_all).mean(axis=0), color='r', alpha=0.7, lw=1)
+
+
+    ###  adding axes to host meta-labels for x- and y- axes
+    ax_meta = fig.add_axes([0,0,1,1], facecolor='none', xticks=[], yticks=[])
+    ax_meta.axis([0,1,0,1])
+
+    ax_meta.text(0.55, 0.99, 'Neurons in Layer 2', size=22, ha='center', va='top')
+    ax_meta.text(0.01, 0.45, 'Neurons in Layer 1', size=22, ha='left', va='center', rotation=90)
+
+    return fig
 
