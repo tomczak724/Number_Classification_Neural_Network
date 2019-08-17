@@ -78,9 +78,11 @@ Click the **CLEAR** button to reset.
 </p>
 
 
-###  References\
+###  References
 
 [3Blue1Brown](https://www.youtube.com/watch?v=aircAruvnKk) - YouTube channel of excellent visual explainations of topics in mathematics 
+
 [MNIST database](http://yann.lecun.com/exdb/mnist/) - Puplic database of handwritten digits
+
 [matplotlib interactive events](https://matplotlib.org/3.1.0/users/event_handling.html) - Matplotlib's official documentation on event handling
 
