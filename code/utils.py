@@ -391,6 +391,21 @@ def plot_cartoon_neural_network():
 
 
 
+    ###  plotting arrows from input to layer 1
+    for i_input in range(n_input_nodes):
+        for i_layer1 in range(n_layer1_nodes):
+
+            x1, y1 = x_input, y_input[i_input]
+            x2, y2 = x_layer1, y_layer1[i_layer1]
+
+            a = matplotlib.patches.FancyArrow(x1, y1, x2-x1, y2-y1,
+                                              width=0.01, color='r')
+
+            ax.add_artist(a)
+
+
+
+
     ax.axis([-1, 13, -7, 7])
     return fig
 
